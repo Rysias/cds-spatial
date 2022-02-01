@@ -5,13 +5,10 @@
 # https://leaflet-extras.github.io/leaflet-providers/preview/
 ## beware that some need extra options specified
 
-# Packages
-install.packages("leaflet")
-install.packages("htmlwidget")
 
 # Example with Markers
-library(leaflet)
-library(htmlwidgets)
+pacman::p_load("leaflet")
+pacman::p_load("htmlwidgets")
 
 popup = c("Robin", "Jakub", "Jannes")
 
