@@ -11,9 +11,7 @@
 
 # Load libraries
 suppressMessages({
-  library(tidyverse)
-  library(sf)
-  library(htmltab)
+  pacman::p_load(tidyverse,sf, htmltab)
 })
 
 # Download data
