@@ -1,0 +1,30 @@
+---
+title: "Week 1 Homework"
+author: "Jonathan Rystrøm"
+date: "1/2/2022"
+output: html_document
+---
+
+## Question 1: answer the question
+*Describe a problem or question in your field that lends itself to spatial analysis.*
+
+## Question 2: Answer the question
+*List data layers that you think are necessary to answer your question/solve your problem. Describe examples of two or three of your listed layers and see if you can find them on the internet.*
+
+## Question 3: Make a Map (option 2)
+*You wish to travel to Chicago for a study stay but wish to stay away from the most crime-ridden areas. You have a friend at Evanston, who invited you in. Is it safe to stay at her place? Make a map that allows both of you to explore the local situation. Use the ChicagoCrime.csv (attached here or on Github) to create an interactive map of murders in the city. Is a heatmap or clustered points better?*
+
+### 3.1
+*Create a standalone .html map in Leaflet showing at least basic topography and relief, and load in the table of points. Make sure she can see the locations of crime and crime attributes when you hovers over the point markers.* 
+
+### 3.2 
+*Consider adding elements such as minimap() and measure() for easier map interaction*
+
+### 3.3
+*Can you create a heatmap of crime?*
+
+### 3.4
+*Explore differentiating the markers (e.g. by color for different kinds of crime)*
+
+### 3.5 
+*Explore the option of clustering markers with addMarkers(clusterOptions = markerClusterOptions()). Do you recommend marker clustering here?*
