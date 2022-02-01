@@ -93,8 +93,45 @@ AUSmap
 saveWidget(AUSmap, "AUSmap.html", selfcontained = TRUE)
 #########################################################
 #
-# Task 1: Create a Danish equivalent with esri layers, call it DKmap
-#
+# Task 1: Create a Danish equivalent with esri layers call it DKmap
+
+# Set the location and zoom level
+leaflet() %>% 
+  setView(10.2, 56.1539084, zoom = 13) %>%
+  addTiles()  # checking I am in the right area
+
+l_dk <- leaflet() %>%   # assign the base location to an object
+  setView(10.2, 56.15, zoom = 6)
+
+esri <- grep("^Esri", providers, value = TRUE)
+
+for (provider in esri) {
+  l_dk <- l_dk %>% 
+    addProviderTiles(provider, group = provider)
+}
+
+DKmap <- l_dk %>%
+  addLayersControl(baseGroups = names(esri),
+                   options = layersControlOptions(collapsed = FALSE)) %>%
+  addMiniMap(tiles = esri[[1]], toggleDisplay = TRUE,
+             position = "bottomright") %>%
+  addMeasure(
+    position = "bottomleft",
+    primaryLengthUnit = "meters",
+    primaryAreaUnit = "sqmeters",
+    activeColor = "#3D535D",
+    completedColor = "#7D4479") %>% 
+  htmlwidgets::onRender("
+                        function(el, x) {
+                        var myMap = this;
+                        myMap.on('baselayerchange',
+                        function (e) {
+                        myMap.minimap.changeLayer(L.tileLayer.provider(e.name));
+                        })
+                        }") %>% 
+  addControl("", position = "topright")
+
+DKmap
 # Task 2: Start collecting spatial data into a spreadsheet: https://docs.google.com/spreadsheets/d/1PlxsPElZML8LZKyXbqdAYeQCDIvDps2McZx1cTVWSzI/edit#gid=1817942479
 #
 #
@@ -103,8 +140,8 @@ saveWidget(AUSmap, "AUSmap.html", selfcontained = TRUE)
 library(tidyverse)
 library(googlesheets4)
 library(leaflet)
-
-places <- read_sheet("https://docs.google.com/spreadsheets/d/1PlxsPElZML8LZKyXbqdAYeQCDIvDps2McZx1cTVWSzI/edit#gid=1817942479",
+doc_url <- "https://docs.google.com/spreadsheets/d/1PlxsPElZML8LZKyXbqdAYeQCDIvDps2McZx1cTVWSzI/edit#gid=1817942479"
+places <- read_sheet(doc_url,
                      range = "SA2022", col_types = "cccnncnc")
 glimpse(places)
 
@@ -120,4 +157,7 @@ leaflet() %>%
 # The googlesheet is at https://docs.google.com/spreadsheets/d/1PlxsPElZML8LZKyXbqdAYeQCDIvDps2McZx1cTVWSzI/edit#gid=1817942479
 
 #########################################################
-
+DKmap %>% 
+  addMarkers(lng = places$Longitude, 
+             lat = places$Latitude,
+             popup = places$Description)
