@@ -8,11 +8,9 @@
 
 # load libraries
 
-suppressMessages({
-  library(tidyverse)
-  library(sf)
-  library(htmltab)
-})
+suppressMessages(
+  pacman::p_load(tidyverse, sf, htmltab)
+)
 
 getwd()
 
