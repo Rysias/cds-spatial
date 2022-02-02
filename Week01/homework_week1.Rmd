@@ -7,15 +7,40 @@ output: html_document
 
 ## Question 1: answer the question
 *Describe a problem or question in your field that lends itself to spatial analysis.*
+An interesting problem in meta-science is the effect of physical location on scientific collaboration. More specifically, are researchers more likely to collaborate with researchers who are physically close? I.e. are researchers at Aarhus University more likely to collaborate with SDU than Boston University? 
+
+This is a task where spatial analysis would intersect nicely with network analysis. One could use spatial analysis for the visualization. In addition, spatial analysis could help highlight additional important factors like administrative- and country boundaries as well as the importance of traffic networks.
 
 ## Question 2: Answer the question
 *List data layers that you think are necessary to answer your question/solve your problem. Describe examples of two or three of your listed layers and see if you can find them on the internet.*
 
+The following layers are necessary to answer the question: A map of administrative borders; A map of transport / roads; locations of the universities; and co-authorship connections between the universities. 
+
+The first two layers (constituting the map) can be found using the `Esri.WorldStreetMap` view. This provides both administrative border as well as transport networks. Locations of universities can be found using the OpenStreetMap API and choosing the administrative buildings (as not to differentiate between faculties within a university). This would conceivably involve a bit of string-parsing but nothing too complex. Finally, co-authorship can be found by scraping the metadata of ArXiv papers (or whatever available source) and creating an undirected network. 
+
+
 ## Question 3: Make a Map (option 2)
 *You wish to travel to Chicago for a study stay but wish to stay away from the most crime-ridden areas. You have a friend at Evanston, who invited you in. Is it safe to stay at her place? Make a map that allows both of you to explore the local situation. Use the ChicagoCrime.csv (attached here or on Github) to create an interactive map of murders in the city. Is a heatmap or clustered points better?*
 
+Let's find out!
+
 ### 3.1
 *Create a standalone .html map in Leaflet showing at least basic topography and relief, and load in the table of points. Make sure she can see the locations of crime and crime attributes when you hovers over the point markers.* 
+
+```{r}
+# Loading packages
+pacman::p_load(tidyverse, leaflet, htmltools)
+
+raw_crimedf <- read_csv('data/ChicagoCrimes2017.csv')
+
+loc_crimedf <- raw_crimedf %>%
+  filter(!Domestic) %>%  #  Remove domestic crimes as these aren't relevant for visitors
+  select(Date, `Primary Type`, Longitude, Latitude) %>% 
+  drop_na(Longitude, Latitude)
+
+
+```
+
 
 ### 3.2 
 *Consider adding elements such as minimap() and measure() for easier map interaction*
