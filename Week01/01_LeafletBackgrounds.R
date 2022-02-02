@@ -160,4 +160,5 @@ leaflet() %>%
 DKmap %>% 
   addMarkers(lng = places$Longitude, 
              lat = places$Latitude,
-             popup = places$Description)
+             popup = places$Description, 
+             clusterOptions = markerClusterOptions())
