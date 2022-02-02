@@ -25,7 +25,7 @@ leaflet() %>%
   addTiles() %>%
   addProviderTiles("Esri.WorldImagery", 
                    options = providerTileOptions(opacity=0.5)) %>% 
-  setView(lng = 151.005006, lat = -33.9767231, zoom = 10)
+  setView(lng = 151.005006, lat = -33.971, zoom = 10)
 
 
 # Europe with Layers
@@ -140,9 +140,13 @@ DKmap
 library(tidyverse)
 library(googlesheets4)
 library(leaflet)
+# gs4_deauth() # if the authentication is not working for you
 doc_url <- "https://docs.google.com/spreadsheets/d/1PlxsPElZML8LZKyXbqdAYeQCDIvDps2McZx1cTVWSzI/edit#gid=1817942479"
 places <- read_sheet(doc_url,
                      range = "SA2022", col_types = "cccnncnc")
+
+
+
 glimpse(places)
 
 leaflet() %>% 
