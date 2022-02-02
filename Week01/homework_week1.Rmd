@@ -33,9 +33,8 @@ pacman::p_load(tidyverse, leaflet, htmltools, lubridate)
 
 raw_crimedf <- read_csv('data/ChicagoCrimes2017.csv')
 
-# Types of crimes we care about (to minimize processing)
+# Types of crimes we care about (to minimize processing) with respective seriousness scores (my judgement)
 danger_crimes <- c("ASSAULT", "HOMICIDE", "CRIM SEXUAL ASSAULT", "ROBBERY")
-
 loc_crimedf <- raw_crimedf %>%
   filter(!Domestic & (`Primary Type` %in% danger_crimes)) %>%  #  Remove domestic crimes as these aren't relevant for visitors
   select(Date, `Primary Type`, `Location Description`, Longitude, Latitude) %>% 
@@ -45,9 +44,10 @@ loc_crimedf <- raw_crimedf %>%
 
 chicago_map <- leaflet() %>% 
   addTiles() %>% 
-  addMarkers(lng = loc_crimedf$Longitude, 
+  addAwesomeMarkers(lng = loc_crimedf$Longitude, 
              lat = loc_crimedf$Latitude,
-             popup = loc_crimedf$`Primary Type`,
+             popup = paste('Crime:', loc_crimedf$`Primary Type`, '<br>',
+                           'Location:', loc_crimedf$`Location Description`),
              clusterOptions = markerClusterOptions())
 
 chicago_map
@@ -70,10 +70,63 @@ chicago_map %>%
 ### 3.3
 *Can you create a heatmap of crime?*
 Let's give it a go!
+```{r}
+pacman::p_load(leaflet.extras)
 
+loc_crimedf <- loc_crimedf %>% 
+  mutate(seriousness = case_when(
+    `Primary Type` == 'ASSAULT' ~ 3,
+    `Primary Type` == 'ROBBERY' ~ 2,
+    `Primary Type` == 'HOMICIDE' ~ 5,
+    `Primary Type` == 'CRIM SEXUAL ASSAULT' ~ 4,
+  ))
+
+loc_crimedf
+
+
+leaflet() %>% 
+  addTiles() %>% 
+  addHeatmap(lng = loc_crimedf$Longitude,
+             lat = loc_crimedf$Latitude, 
+             intensity = loc_crimedf$seriousness,
+             max = 400,
+             radius = 10)
+  
+```
+It has taken a bit of parameter tuning to get the heatmap to be meaningful. It also greatly depends on the zoom level with higher scales making it less useful. 
 
 ### 3.4
 *Explore differentiating the markers (e.g. by color for different kinds of crime)*
+```{r}
+getColor <- function(crime_types) {
+  case_when(
+    crime_types == "HOMICIDE" ~ "black",
+    crime_types == "ASSAULT" ~ "red",
+    crime_types == "CRIM SEXUAL ASSAULT" ~ "pink",
+    crime_types == "ROBBERY" ~ "orange",
+  )
+}
+
+icons <- awesomeIcons(
+  icon = 'ios-close',
+  iconColor = 'black',
+  library = 'ion',
+  markerColor = getColor(loc_crimedf$`Primary Type`)
+)
+
+
+chicago_map_new <- leaflet() %>% 
+  addTiles() %>% 
+  addAwesomeMarkers(lng = loc_crimedf$Longitude, 
+             lat = loc_crimedf$Latitude,
+             popup = paste('Crime:', loc_crimedf$`Primary Type`, '<br>',
+                           'Location:', loc_crimedf$`Location Description`),
+             icon = icons,
+             clusterOptions = markerClusterOptions())
+
+chicago_map_new
+```
+
 
 ### 3.5 
 *Explore the option of clustering markers with addMarkers(clusterOptions = markerClusterOptions()). Do you recommend marker clustering here?*
