@@ -29,24 +29,48 @@ Let's find out!
 
 ```{r}
 # Loading packages
-pacman::p_load(tidyverse, leaflet, htmltools)
+pacman::p_load(tidyverse, leaflet, htmltools, lubridate)
 
 raw_crimedf <- read_csv('data/ChicagoCrimes2017.csv')
 
+# Types of crimes we care about (to minimize processing)
+danger_crimes <- c("ASSAULT", "HOMICIDE", "CRIM SEXUAL ASSAULT", "ROBBERY")
+
 loc_crimedf <- raw_crimedf %>%
-  filter(!Domestic) %>%  #  Remove domestic crimes as these aren't relevant for visitors
-  select(Date, `Primary Type`, Longitude, Latitude) %>% 
-  drop_na(Longitude, Latitude)
+  filter(!Domestic & (`Primary Type` %in% danger_crimes)) %>%  #  Remove domestic crimes as these aren't relevant for visitors
+  select(Date, `Primary Type`, `Location Description`, Longitude, Latitude) %>% 
+  drop_na(Longitude, Latitude) %>% 
+  mutate(Date = parse_date_time(Date, "mdy HMS"))
 
 
+chicago_map <- leaflet() %>% 
+  addTiles() %>% 
+  addMarkers(lng = loc_crimedf$Longitude, 
+             lat = loc_crimedf$Latitude,
+             popup = loc_crimedf$`Primary Type`,
+             clusterOptions = markerClusterOptions())
+
+chicago_map
 ```
 
+I had to add the `clusterOptions` or the map simply couldn't be processed. But 
 
 ### 3.2 
 *Consider adding elements such as minimap() and measure() for easier map interaction*
+I'll add a minimap :))
+```{r}
+chicago_map %>% 
+  addMiniMap(toggleDisplay = TRUE,
+             position = "bottomright") 
+  
+```
+
+
 
 ### 3.3
 *Can you create a heatmap of crime?*
+Let's give it a go!
+
 
 ### 3.4
 *Explore differentiating the markers (e.g. by color for different kinds of crime)*
