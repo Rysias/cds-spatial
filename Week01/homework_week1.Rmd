@@ -98,15 +98,17 @@ It has taken a bit of parameter tuning to get the heatmap to be meaningful. It a
 ### 3.4
 *Explore differentiating the markers (e.g. by color for different kinds of crime)*
 ```{r}
+# Function to get the color of a specific crime. Returns a vector of colors
 getColor <- function(crime_types) {
   case_when(
-    crime_types == "HOMICIDE" ~ "black",
+    crime_types == "HOMICIDE" ~ "darkgray",
     crime_types == "ASSAULT" ~ "red",
     crime_types == "CRIM SEXUAL ASSAULT" ~ "pink",
     crime_types == "ROBBERY" ~ "orange",
   )
 }
 
+# Creates a list of icons for plotting
 icons <- awesomeIcons(
   icon = 'ios-close',
   iconColor = 'black',
@@ -130,3 +132,4 @@ chicago_map_new
 
 ### 3.5 
 *Explore the option of clustering markers with addMarkers(clusterOptions = markerClusterOptions()). Do you recommend marker clustering here?*
+Due to the immense processing time, I have already done this in 3.1. However, this is because I definitely recommend marker clustering - otherwise it becomes a jumbled mess. It also encourages exploration, as you can more easily decide your level of granularity. 
