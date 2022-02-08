@@ -1,6 +1,6 @@
 ---
 title: "Working with sf objects"
-author: "Adela Sobotkova"
+author: "Jonathan Rystrøm"
 date: "04-February-2022 updated `r Sys.Date()`"
 output:
   rmdformats::readthedown:
@@ -242,6 +242,7 @@ plot(zion2['UNIT_CODE']); plot(srtm2, add=TRUE)
 # /End Code/ #
 ```
 
+Looks weird AF but ¯\\_(ツ)_/¯ 
 
 # Exercise 4 - Make a map of Denmark (Optional)
 
