@@ -49,14 +49,40 @@ In this exercise you will read in three shapefiles (parks, playgrounds, and fore
 * Use the `head()` function and identify the first few features of each layer.
 
 ```{r load, eval=FALSE, echo=TRUE}
+# Load the sf package
+pacman::p_load(sf, janitor)
 
+# Helper function
+read_clean_sf <- function(path) {
+  read_sf(path) %>% 
+    clean_names() %>% 
+    remove_empty()
+}
+
+
+# Read in the forests shapefile
+forests <- read_clean_sf("../data/forests.shp") 
+
+# Read in the parks shapefile
+parks <- read_clean_sf("../data/parks.shp")
+
+# Read in the playgrounds shapefile
+playgrounds <- read_clean_sf("../data/playgrounds4326.shp")
+
+# Read in the shelters json
+shelters <- read_clean_sf("../data/shelters.json")
+
+# View the first few features of all layers
+all_stuff <- list(forests, parks, playgrounds, shelters)
+sapply(all_stuff, head)
 ```
 
 ## Questions: 
 
 1. How many features does each layer contain and what kind of geometry are they?
+`forests` and `parks` seem to be multipolygons and the other two are points. All objects have 6 features, but the number of fields differ and are 15, 10, 5, and 5 for `forests`, `parks`, `playgrounds`, and `shelters` respectively. 
 2. What is the CRS value in these objects?
-
+ETRS89 / UTM zone 32N for all of them it seems
 
 Well done, now you should see how easy it can be to read in shapefiles and you got your first taste of what an sf object looks like.
 
@@ -76,22 +102,22 @@ Spatial objects in `sf` are just data frames with some special properties. This 
 * Use the `head()` function to check which variables exist in your new data frame. Does the data frame only have the `navn` and `areal_m2` columns (the answer is no, why)?
 
 ```{r wrangle-parks, eval=FALSE, echo=TRUE}
-# Load the sf package
-___
+# Load the sf package and the dplyr package
+pacman::p_load(sf, dplyr)
 
-# ... and the dplyr package
-___
-
-# Use filter() to limit to over5ha parks
-___
+# Use filter() to limit to over5ha parks (50k m2)
+over5ha <- parks %>% 
+  filter(areal_m2 > 50000)
 
 # Count the number of rows
-___
+print(nrow(over5ha))
 
 # Limit to navn and areal_m2 variables
-
+over5ha <- over5ha %>% 
+  select(navn, areal_m2)
 
 # Use head() to look at the first few records
+head(over5ha)
 
 ```
 
