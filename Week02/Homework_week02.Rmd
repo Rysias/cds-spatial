@@ -237,7 +237,7 @@ plot(srtm); plot(srtm2) # Looking at differences
 
 # Reprojecting zion with srtm
 zion2 <- st_transform(zion, crs(srtm))
-plot(zion2['UNIT_CODE']); plot(srtm2, add=TRUE)
+plot(srtm);plot(zion2['UNIT_CODE'], borders="black", add=T)
 
 # /End Code/ #
 ```
