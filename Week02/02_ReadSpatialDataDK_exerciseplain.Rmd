@@ -305,18 +305,31 @@ Instead of storing raster objects in data frames, the `raster` package stores sp
 ## Instructions
 
 * You should have `raster` package loaded, and have the  `elevation` layer and ortophoto image layer for Aarhus in memory.
+I will refer to the `raster_objs` list with `elevation` being indexed by 1 and `aarhus` being by 2
+
+
 * Use the `extent()` function to get the extent of the `elevation` and `aarhus` layer.
-* Use the `crs()` function to get the coordinate reference system of `aarhus` and `elevation`.
-* Use the `ncell()` function to determine how many grid cells are in the `elevation` layer and the `aarhus` layer.
-
-```{r load raster, eval=FALSE, echo=TRUE}
-
+```{r}
+lapply(raster_objs, extent)
 ```
+
+* Use the `crs()` function to get the coordinate reference system of `aarhus` and `elevation`.
+```{r}
+lapply(raster_objs, crs)
+```
+Here we see that `elevation` doesn't have a WKT2 string which makes it old school :))
+
+* Use the `ncell()` function to determine how many grid cells are in the `elevation` layer and the `aarhus` layer.
+```{r}
+lapply(raster_objs, ncell)
+```
+
 
 
 Great work! Although rasters are not stored as data frames, the metadata can easily be extracted using functions like `extent()`, `crs()` and `ncell()`.
 
 *Question 3: It makes sense that the extents and number of cells for Danish national elevation data and Aarhus city would be different because their sizes diverge, but why are the units so different? What are these units?*
+It seems that the elevation data is in degrees, while the Aarhus city is in some different CRS that is more fine. This is a matter of them using different projections. 
 
 
 # Task 8: Plot your raster object
@@ -327,13 +340,24 @@ The raster package has added useful methods for plotting both single and multi-b
 ## Instructions
 
 * Plot the `elevation` raster with the `plot()` function, it is a single-band raster.
-* Plot the `aarhus` object with the `plot()` function, it is a multi-band raster.
-* Plot the `aarhus` raster with `plotRGB()` to see all layers plotted together as a single image. Check out the optional `stretch` argument in this function, and set it to `linear` to brighten the image up a little
-* Try to plot the two images together (on top of one another). Can you do it?
-
-```{r plot raster, eval=FALSE, echo=TRUE }
-
+```{r}
+plot(elevation)
 ```
+
+* Plot the `aarhus` object with the `plot()` function, it is a multi-band raster.
+```{r}
+plot(orthophoto)
+```
+
+* Plot the `aarhus` raster with `plotRGB()` to see all layers plotted together as a single image. Check out the optional `stretch` argument in this function, and set it to `linear` to brighten the image up a little
+```{r plot raster, eval=FALSE, echo=TRUE }
+plotRGB(orthophoto, stretch='linear')
+```
+* Try to plot the two images together (on top of one another). Can you do it?
+```{r}
+#plot(elevation);plotRGB(orthophoto, add=TRUE)
+```
+It crashed my R session :((
 
 
 Nice work! As you can see, the `plot()` function can be used to plot single layers while the `plotRGB()` function can be used to combine layers into a single image. Plotting two raster objects of different extents, resolution and CRS can not be done without additional wrangling
