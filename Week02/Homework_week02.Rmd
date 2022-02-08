@@ -8,6 +8,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
+rm(list=ls())
 library(knitr)
 library(rmdformats)
 
@@ -40,11 +41,7 @@ We will use the sf, raster, and tmap packages.
 Additionally, we will use the spData and spDataLarge packages that provide new datasets.
 
 ```{r}
-library(sf)
-library(raster)
-library(tmap)
-library(spData)
-library(spDataLarge)
+pacman::p_load(sf, raster, tmap, spData, spDataLarge)
 ```
 
 
@@ -56,12 +53,18 @@ In this exercise you will learn to make a map with tmaps library, by adding spat
 
 We will use two data sets: `nz_elev` and `nz`. They are contained by the libraries
 The first one is an elevation raster object for the New Zealand area, and the second one is an sf object with polygons representing the 16 regions of New Zealand.
+```{r}
+data("nz")
+data(nz_elev)
+```
+
 
 #### Existing code
 
 Here is the code to create a new map of New Zealand (following Robin Lovelace's example).Your role is to improve this map based on the suggestions below.
 
 ```{r initial-map}
+
 tm_shape(nz_elev)  +
   tm_raster(title = "elev", 
             style = "cont",
@@ -78,6 +81,7 @@ tm_shape(nz_elev)  +
   tm_layout(main.title = "My map",
             bg.color = "orange",
             inner.margins = c(0, 0, 0, 0))
+
 ```
 
 
@@ -99,6 +103,23 @@ tm_shape(nz_elev)  +
 
 ```{r improved-map}
 # /Start Code/
+tm_shape(nz_elev)  +
+  tm_raster(title = "elev (m asl)", 
+            style = "cont",
+            palette = "-RdYlGn") +
+  tm_shape(nz) +
+  tm_borders(col = "black", 
+             lwd = 1) +
+  tm_scale_bar(breaks = c(0,100, 200, 300, 400, 500),
+               text.size = 1) +
+  tm_compass(position = c("right", "top"),
+             type = "rose", 
+             size = 2) +
+  tm_credits(text = "J. Rystroem, 2022-02-08") +
+  # Change title
+  tm_layout(main.title = "New Zealand",
+            bg.color = "lightgrey",
+            inner.margins = c(0, 0, 0, 0))
 
 # /End Code/
 ```
@@ -143,8 +164,48 @@ Type answers to the questions as code comments next to or under the code used
 
 ```{r inspect-data}
 # /Start Code / #
+######################
+# STARTING WITH ZION #
+######################
+
+# What can you say about the content of this file? #
+zion   # It is a single polygon with 11 fields (vector)
+
+# What type of data does it store?  #
+head(zion)  # A bunch of metadata, ids and relevant urls
+
+# What is the coordinate system used? #
+crs(zion) # It uses the GRS 1980 system
+
+# How many attributes does it contain? #
+# from inspecting we see it has 11 fields though there is a lot of redundant 
+
+# What is its geometry? #
+# It is a POLYGON 
 
 
+################
+# NEXT UP SRTM #
+################
+
+# What can you say about the content of this file? #
+srtm   # It is a RasterLayer 
+
+# What type of data does it store? #
+# class, dimensions, resolution, crs, source, range 
+
+# What is the coordinate system used? #
+crs(srtm) # It uses the WGS84 system
+
+# How many attributes does it contain? #
+# Not any apart from the stuff 
+
+# How many dimensions does it have? #
+# 457 rows and 465 columns
+
+# What is the data resolution? #
+# resolution : 0.0008333333, 0.0008333333  (x, y)
+  
 # /End Code/ #
 ```
 
