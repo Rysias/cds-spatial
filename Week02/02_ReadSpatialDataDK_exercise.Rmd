@@ -9,7 +9,7 @@ output:
 
 ```{r setup, include=FALSE}
 library(knitr)
-library(rmdformats)
+pacman::p_load(rmdformats)
 
 ## Global options
 options(max.print="75")
@@ -50,22 +50,23 @@ In this exercise you will read in three shapefiles (parks, playgrounds, and fore
 
 ```{r load, eval=FALSE, echo=TRUE}
 # Load the sf package
-___(___)
+pacman::p_load(sf)
 
 # Read in the forests shapefile
-forests <- ___("../data/forests.shp")
+forests <- read_sf("../data/forests.shp")
 
 # Read in the parks shapefile
-parks <- ___(___)
+parks <- read_sf("../data/parks.shp")
 
 # Read in the playgrounds shapefile
-playgrounds <- ___(___)
+playgrounds <- read_sf("../data/playgrounds4326.shp")
 
 # Read in the shelters json
-shelters <- ___(___)
+shelters <- read_sf("../data/shelters.json")
 
 # View the first few features of all layers
-___(___)
+all_stuff <- list(forests, parks, playgrounds, shelters)
+sapply(all_stuff, head)
 ```
 
 ## Questions: 
