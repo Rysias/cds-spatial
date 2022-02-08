@@ -50,7 +50,7 @@ In this exercise you will read in three shapefiles (parks, playgrounds, and fore
 
 ```{r load, eval=FALSE, echo=TRUE}
 # Load the sf package
-pacman::p_load(sf, janitor)
+pacman::p_load(sf, janitor, raster)
 
 # Helper function
 read_clean_sf <- function(path) {
@@ -143,20 +143,20 @@ In this exercise, you will convert the data frame to what's called a `tibble` wi
 
 ```{r geometry, eval = FALSE, echo = TRUE}
 # Create a standard, non-spatial data frame with one column
-df <- ___(a = 1:3)
+df <- tibble(a = 1:3)
 
 # Add a list column to your data frame
-df$b <- ___(1:4, 1:5, 1:10)
+df$b <- list(1:4, 1:5, 1:10)
 
 # Look at your data frame with head
-___(df)
+head(df)
 
 # Convert your data frame to a tibble and print on console
-___(df)
+print(df)
 
 # Pull out the third observation from both columns individually
-df$___[___]
-df$___[___]
+df$a[3]
+df$b[3]
 ```
 You now have a better sense of what a list column is. You can see how it can be used to store far more information in a single variable than other types of columns. These list-columns are how `sf` stores detailed geographic information on each feature in a single record. Converting the data frame to a tibble is not necessary but a tibble can provide a better print out of the object.
 
@@ -200,7 +200,16 @@ length(which(result > val))
 
 
 ```{r forests, eval=FALSE, echo=TRUE}
+# Area and histogram
+forest_area <- st_area(forests)
+hist(forest_area)
+# Plot stuff
+forests %>% 
+  filter(unclass(st_area(.)) > 200000) %>%
+  st_geometry() %>% 
+  plot
 
+raster::plot(forests['navn'], legend=F)
 ```
 
 
@@ -217,15 +226,31 @@ Often, you also want to plot multiple spatial objects together to see if and how
 ## Instructions
 
 * Use `plot()` to plot the `forest` data using all defaults.
-* Plot just the `areal_m2` attribute of forests.
-* Create a new object that is just the geometry of the forests object with `st_geometry()`.
-* Plot the geometry of the forests (the object you just created).
-* Plot the geometry of the forests and the parks together, making the parks pink and the forests green.
-
-```{r plotting-sf, eval=FALSE}
-
+```{r}
+plot(forests)
 ```
 
+* Plot just the `areal_m2` attribute of forests.
+```{r}
+forests %>% 
+  select(areal_m2) %>% 
+  plot()
+```
+
+* Create a new object that is just the geometry of the forests object with `st_geometry()`.
+```{r}
+forest_geom <- st_geometry(forests)
+```
+
+* Plot the geometry of the forests (the object you just created).
+```{r}
+plot(forest_geom)
+```
+
+* Plot the geometry of the forests and the parks together, making the parks pink and the forests green.
+```{r}
+plot(forests$geometry, col='green');plot(parks$geometry, col='pink', add=T)
+```
 
 Well done! Yes, these plots are not super pretty but you can't beat `plot()` for a quick look using few keystrokes. And remember you can use `plot(st_geometry(geo_object))` to plot just the geometry of your object.
 
@@ -248,13 +273,28 @@ Multi-band rasters will have more than one layer. An example is a color aerial p
 * Use the `nlayers()` function to determine how many bands/layers are in each object.
 
 ```{r loadraster, eval=FALSE, echo=TRUE}
+pacman::p_load(raster, rgdal)
+elevation <- raster('../data/DNK_msk_alt.grd')
+orthophoto <- brick('../data/Aarhus_1m.TIF')
+raster_objs <- list(elevation, orthophoto)
 
+lapply(raster_objs, class)
+lapply(raster_objs, nlayers)
 ```
 
 *Questions:*
 
 1. What are the dimensions (number of columns and rows) of the `elevation` raster?
+```{r}
+elevation
+```
+the dimensions seems to be **396 rows and 876 columns**
+
 2. What is the resolution of `aarhus` orthophoto? How many layers does it contain and what do they represent?
+```{r}
+orthophoto
+```
+It seems to have a resolution of 1 meter(?) with a depth of five bands, which may be different frequencies?
 
 Now you've learned how to read in single and multi-band rasters. You should have noticed, based on the `nlayers()` function, that the `elevation` object has a single layer and the `aarhus` object has four.
 
