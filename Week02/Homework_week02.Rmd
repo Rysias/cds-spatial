@@ -230,6 +230,14 @@ Now that you know that coordinate systems differ, make them compatible!
 ```{r}
 # /Start Code/ #
 
+# Reprojecting srtm with zion #
+srtm2 <- srtm
+crs(srtm2) <- crs(zion)
+plot(srtm); plot(srtm2) # Looking at differences
+
+# Reprojecting zion with srtm
+zion2 <- st_transform(zion, crs(srtm))
+plot(zion2['UNIT_CODE']); plot(srtm2, add=TRUE)
 
 # /End Code/ #
 ```
@@ -246,11 +254,4 @@ Make a handsome map of Denmark from data available online with a scale, a north 
   - Remember that the `getData()` function takes a number of different attributes, plus the country code in a ISO 3-letter format. You can google what it is for Denmark, or use the `getData('ISO3')` function to view it. For an example of how to use the `getData()` function [see this blog](https://www.gis-blog.com/r-raster-data-acquisition/)
 * Make a map with `tmaps` library following the Exercise no.1
 
-## Your solution
-```{r}
-# /Start Code/ #
-
-
-# /End Code/ #
-```
-
+I'm skipping this week :))
