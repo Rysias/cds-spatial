@@ -1,6 +1,6 @@
 ---
 title: "Week 03 - Bounding boxes, Buffers, Centroids and Spatial Joins"
-author: "Adela Sobotkova"
+author: "Adela Sobotkova feat. Jonathan Rystrøm"
 date: "06/01/2021 updated`r Sys.Date()`"
 output:
   rmdformats::readthedown:
@@ -8,6 +8,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
+rm(list=ls())
 library(knitr)
 library(rmdformats)
 
@@ -39,14 +40,33 @@ Although, technically you can buffer data with unprojected coordinate reference 
 
 ```{r buffer, eval=FALSE}
 # Create dataframe with lat long data
-df <- data.frame(place = c("Aarhus Domkirke", 
+raw_dat <- data.frame(place = c("Aarhus Domkirke", 
                            "Christianskirken",
                            "Nobelparken"),
                  longitude=c(10.2102364,10.1949197,10.2033485),
                  latitude=c(56.1574919,56.1772228,56.174346))
 
 # YOUR CODE
+# Load packages
+pacman::p_load(sf, raster)
 
+# Read data
+shelters <- read_sf("../data/shelters.json") %>% 
+  janitor::clean_names() %>% 
+  janitor::remove_empty()
+aarhus <- brick("../data/Aarhus_1m.TIF")
+
+# Convert
+df <- st_as_sf(raw_dat, coords = c("longitude", "latitude"), crs=4326)
+
+# Change CRS
+df <- st_transform(df, crs=st_crs(shelters))
+
+# Buffer for shelter
+shelter_buffer <- st_buffer(shelters, 500)
+
+# Plot stuff together
+plot(shelters['bookbar']); plot(shelter_buffer['bookbar'], add=T); plotRGB(aarhus, stretch='lin', add=T)
 ```
 
 

@@ -1,6 +1,6 @@
 ---
 title: "Ancient cities and inscriptions"
-author: "Adela Sobotkova"
+author: "Jonathan HR"
 date: "13/01/2021 updated `r format(Sys.time(), '%B %d, %Y')`" 
 output:
   rmdformats::readthedown:
@@ -8,6 +8,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
+rm(list=ls())
 library(knitr)
 library(rmdformats)
 
@@ -38,28 +39,28 @@ John Hanson has created a dataset of all cities in the ancient Mediterranean and
 * Use `read_csv()` to load `Hanson2016_Cities_OxREP.csv` dataset from the provided URL and assign it to `cities` object
 
 ```{r load-cities, eval=FALSE}
-cities <- as.data.frame(read_csv("http://oxrep.classics.ox.ac.uk/oxrep/docs/Hanson2016/________________"))
+cities <- as.data.frame(read_csv("http://oxrep.classics.ox.ac.uk/oxrep/docs/Hanson2016/Hanson2016_Cities_OxREP.csv"))
 ```
 
 ... then reproject this data to EPSG 3035
 ```{r prj-cities, eval=FALSE}
 # Convert the table into an sf object on the basis of X and Y columns
-cities_sf <- ________(cities, coords = c("Longitude (X)", "Latitude (Y)"))
+cities_sf <- st_as_sf(cities, coords = c("Longitude (X)", "Latitude (Y)"))
 
 # Define the projection of Lat/Long coordinates as EPSG 4326
-cities_sf4326<- st_set_crs(cities_sf, ________)
+cities_sf4326<- st_set_crs(cities_sf, 4326)
 
 # Transform the projection to a 2D projection using EPSG 3035
-cities_sf3035<- st_transform(cities_sf4326, ___________)
+cities_sf3035<- st_transform(cities_sf4326, crs=3035)
 
 # Verify the projection is 'projected' not 'geographic'
-______(cities_sf3035)
+st_crs(cities_sf3035)
 ```
 
 
 ### Question: 
 *1. What are the measurement units of the `cities_sf3035` object?*
-
+from the `st_crs` output we can see that the unit is meters (from the `LENGTHUNIT` attribute)
 
 # Task 2: Create a buffer around each city and inspect the result
 
