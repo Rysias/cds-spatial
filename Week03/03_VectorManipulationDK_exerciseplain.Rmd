@@ -119,6 +119,30 @@ In the `sf` package, there is a function for extracting the bounding box coordin
 
 ```{r Ar-box, eval= FALSE}
 # YOUR CODE
+aarhus_mun <- municipalities %>% 
+  filter(NAME_2 == "Århus")
+
+# Checks out
+shelters <- read_sf("../data/shelters.json")
+plot(aarhus_mun$geometry); plot(shelters, add=T)
+
+# bbox
+aarhus_bbox <- st_bbox(aarhus_mun)
+
+# Make grid 
+aarhus_grid <- st_make_grid(aarhus_mun, n=1) %>% 
+  st_transform(crs(shelters))
+
+plot(municipalities$geometry); plot(aarhus_grid, add=T)
+
+# Orthophoto
+aarhus_photo <- brick("../data/Aarhus_1m.TIF")
+
+crs(shelters)
+
+st_crs(aarhus_bbox) == st_crs(aarhus_photo)
+
+plot(aarhus_grid); plot(shelters$geometry, add=T);plotRGB(aarhus_photo, add=T)
 ```
 
 
