@@ -169,31 +169,36 @@ library(jsonlite)
 library(tidytext)
 
 # Download the file and save as inscriptions.json (consider commenting out after you first run to avoid repeat downloading)
-download.file("https://sciencedata.dk/public/b6b6afdb969d378b70929e86e58ad975/EDH_subset_2021-02-15.json", "________/inscriptions.json")
+download.file("https://sciencedata.dk/public/b6b6afdb969d378b70929e86e58ad975/EDH_subset_2021-02-15.json", "../data/inscriptions.json")
 
 # Load it into R from wherever you put it, and convert into a tibble
-list_json <- jsonlite::fromJSON("_______/inscriptions.json")
+list_json <- jsonlite::fromJSON("../data/inscriptions.json")
 inscriptions = as_tibble(list_json)
 
 # Check the first couple lines and column names
-____(inscriptions)
-____(inscriptions)
+head(inscriptions)
+names(inscriptions)
 head(unlist(inscriptions$coordinates))
 inscriptions$coordinates[[1]][2]
+inscriptions %>% 
+  select(coordinates)
+
 
 # Wrangle the coordinates into a 2-column format - practice on a small dataset
 i_sm <- inscriptions %>% 
   slice(1:100) %>% 
   separate(col = coordinates, into = c("longitude","latitude"), sep = ",") %>%
-  mutate(latitude = as.numeric(gsub("_________","",latitude)),
-         longitude = as.numeric(gsub("_________","",longitude))) 
+  mutate(latitude = parse_number(latitude),
+         longitude = parse_number(longitude))
 
 # Apply the pipeline to the whole dataset, once happy with the result
-
-
+i <- inscriptions %>% 
+  separate(col = coordinates, into = c("longitude","latitude"), sep = ",") %>%
+  mutate(latitude = parse_number(latitude),
+         longitude = parse_number(longitude))
 
 # Check the result of the subset, does the location look reasonable?
-leaflet() %>% addTiles() %>% addMarkers(lng=i$longitude,lat=i$latitude)
+leaflet() %>% addTiles() %>% addMarkers(lng=i$longitude,lat=i$latitude, clusterOptions=markerClusterOptions())
 ```
 
 Oooof. That was some serious wrangling!
