@@ -85,7 +85,17 @@ Also similar to buffering, centroid calculations should generally be performed o
 * Plot the geometry of `municipalities` object with the centroids on top. This requires two calls to `plot()` run together. The second will need `add = TRUE`.
 
 ```{r centroids, eval=FALSE}
+pacman::p_load(rgeos)
 # YOUR CODE
+municipalities <- getData("GADM", country = "DNK", level = 2) %>% 
+  st_as_sf() %>% 
+  st_transform(25832) %>% 
+  janitor::remove_empty()
+
+centroids <- st_centroid(municipalities)
+
+# Plotting (only the geometry)
+plot(municipalities$geometry);plot(centroids, add=T)
 ```
 
 
