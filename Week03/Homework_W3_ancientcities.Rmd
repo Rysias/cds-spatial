@@ -71,11 +71,11 @@ As each city and inscription corresponds to a dot on the map, the best way to gr
 
 ```{r buff, eval=FALSE}
 # Make buffer of 5 km. Check the units of your object to correctly assign value to dist
-cities_5km<- st_buffer(_____,dist = _________)
+cities_5km<- st_buffer(cities_sf3035,dist = 5000)
 
 # Plot the first 10 buffers and cities to check result 
-plot(___________(___________)[1:10], col = "yellow")
-plot(___________(___________)[1:10], pch=20, cex = 0.1, add = TRUE)
+plot(cities_sf3035[1:10, "geometry"], col = "yellow")
+plot(cities_5km[1:10, 'geometry'], pch=20, cex = 0.1, add = TRUE)
 
 ```
 
@@ -88,27 +88,27 @@ Well, a quick review may look ok, but you cannot be sure your buffers work well 
 
 ```{r tmap, eval=FALSE}
 # Grab the first 10 elements in the sf object and the buffer
-ten_buffers <- ________ %>% slice(1:10)
-ten_cities <- ________ %>% slice(1:10)
+ten_buffers <- cities_5km %>% slice(1:10)
+ten_cities <- cities_sf3035 %>% slice(1:10)
 
 # Create a quick tmap
 library(tmap)
 current.mode <- tmap_mode("plot")
 
 tm_shape(ten_buffers)  +
-  tm_polygons(col = ________) +
+  tm_polygons(col = 'Province') +
   tm_shape(ten_cities) +
-  tm_text("Ancient Toponym", size = ___, auto.placement = 5) +
-  tm_dots(col = __________, 
+  tm_text("Ancient Toponym", size = 1, auto.placement = 5) +
+  tm_dots(col = "Ancient Toponym", 
              size = 0.1) +
- tm_scale_bar(breaks = ______________,
+ tm_scale_bar(breaks = c(0, 5, 10, 20, 40),
                text.size = 16,
                position = c("LEFT", "bottom")) +
-  tm_compass(position = c("_________", "top"),
+  tm_compass(position = c("RIGHT", "top"),
              type = "rose", 
              size = 2) +
-  tm_credits(position = c(__________),
-             text = ________________) +
+  tm_credits(position = c("RIGHT", "bottom"),
+             text = "skrrrt") +
   tm_layout(main.title = "Map with a scale",
             bg.color = "beige",
             inner.margins = c(0, 0, 0, 0))
@@ -121,12 +121,28 @@ If all went well, you should see a map, where the diameter of each city buffer c
 The `tmap` package allows you also an interactive view if you switch the `tmap_mode()` argument to `"view"`. Try it out and assess its (dis)advantages. Which arguments are retained and which are dropped from your `tm_shape` sequence? 
 
 ```{r tmap-view, eval = FALSE}
-current.mode <- tmap_mode(___________)
-tm_shape(_________) +
-  ........
+current.mode <- tmap_mode("view")
+tm_shape(ten_buffers)  +
+  tm_polygons(col = 'Province') +
+  tm_shape(ten_cities) +
+  tm_text("Ancient Toponym", size = 1, auto.placement = 5) +
+  tm_dots(col = "Ancient Toponym", 
+             size = 0.1) +
+ tm_scale_bar(breaks = c(0, 5, 10, 20, 40),
+               text.size = 16,
+               position = c("LEFT", "bottom")) +
+  tm_compass(position = c("RIGHT", "top"),
+             type = "rose", 
+             size = 2) +
+  tm_credits(position = c("RIGHT", "bottom"),
+             text = "skrrrt") +
+  tm_layout(main.title = "Map with a scale",
+            bg.color = "beige",
+            inner.margins = c(0, 0, 0, 0))
 
 ```
 
+Very nice!
 
 Now you should be able to see that the first ten towns and buffers are from mainland Greece. This flexibility of tmaps is very useful.
             
