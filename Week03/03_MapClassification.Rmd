@@ -58,20 +58,20 @@ hist(nz$Population)
 
 ```{r maps}
 # This line of code applies the 'pretty' style rounding legend numbers. Try different numbers of classes.
-tm_shape(nz) + tm_polygons(col = "Population", style = "pretty", n = 4)
+pretty_nz <- tm_shape(nz) + tm_polygons(col = "Population", style = "pretty", n = 4)
 
 # "Jenks" style further smooths over the gaps
-tm_shape(nz) + tm_polygons(col = "Population", style = "jenks", n = 5)
+jenks_nz <- tm_shape(nz) + tm_polygons(col = "Population", style = "jenks", n = 5)
 
 # quantile style divides into 5 even groups
-tm_shape(nz) + tm_polygons(col = "Population", style = "quantile", n=5)
+quantile_nz <- tm_shape(nz) + tm_polygons(col = "Population", style = "quantile", n=5)
 
 # Equal interval style divides the distribution into even groups
-tm_shape(nz) + tm_polygons(col = "Population", style = "equal", n = 5)
+equal_nz <- tm_shape(nz) + tm_polygons(col = "Population", style = "equal", n = 5)
 
 # Write maps above to objects and plot them side by side 
 # with tmap_arrange() for better comparison
-tmap_arrange(___,___,___,____)
+tmap_arrange(pretty_nz,jenks_nz,quantile_nz,equal_nz)
 ```
 
 
@@ -79,24 +79,25 @@ tmap_arrange(___,___,___,____)
 #### Questions
 
 * 1. What are the advantages and disadvantages of each classification method?
+- Equal/pretty  is good for uniform data, but can blur out logarithmic data
+- Jenks does some nice smoothing but is more opaque 
+- Quantiles makes sure there is a nice range but obscures the actual values 
+
 * 2. Choose the best classification and create a map with easily legible legend and all other essentials.(Select a suitable color palette from http://colorbrewer2.org/, north arrow, scale, map title, legend title, reasonable number of breaks in the classification )
+
+```{r Nice map}
+tm_shape(nz) + 
+  tm_polygons(col = "Median_income", style='jenks',breaks=5, palette="BuGn") + 
+  tm_compass() +
+  tm_layout(title="New Zealand")
+
+nz
+?tm_shape
+```
+
+
 * 3. Which method and how many classes did you end up using to display your data? Why did you select that method?
+I selected jenks because it seemed to have nice stuff, and the colors because I like green and it didn't seem angry. 
 * 4. What principles did you use in arranging the parts of your map layout the way you did and how did you apply these principles?
+I made sure to have the title and legend in upper left and not create too much clutter
 
-# Your solution
-
-```{r}
-# /Start Code/ #
-
-
-# /End Code/ #
-```
-
-# Map of Danish municipalities and monuments
-
-```{r}
-# /Start Code/ #
-
-
-# /End Code/ #
-```
