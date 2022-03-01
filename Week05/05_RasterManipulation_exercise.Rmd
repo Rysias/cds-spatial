@@ -203,28 +203,28 @@ The function to reduce resolution in rasters is `aggregate()` which, as you migh
 
 ```{r aggr, eval=FALSE}
 # Load the IKONOS raster
-east <- ________________ 
+east <- brick("../data/KazE.tif") 
 
 # Plot the IKONOS raster
-___(east)
+plotRGB(east, stretch="lin", r=4)
 
 # Determine the raster resolution
-___(east)
+res(east)
 
 # Determine the number of cells
-___(east)
+ncell(east)
 
 # Aggregate the raster
-east_small <- ___(east, fact = ___)
+east_small <- aggregate(east, fact = 10)
 
 # Plot the new east layer
-___(east_small)
+plotRGB(east_small, stretch="lin", r=4)
 
 # Determine the new raster resolution
-___(east_small)
+res(east_small)
 
 # Determine the number of cells in the new raster
-___(east_small)
+ncell(east_small)
 ```
 
 Lovely job! In this example you read in a raster and then converted it to a lower resolution raster to save on the size of the object and ultimately computation power required. In this example, the raster was not too big to begin with so perhaps aggregating would not be necessary but for big rasters such as you will see next week, this can be a big help and a necessity.
