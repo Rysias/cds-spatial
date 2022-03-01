@@ -243,11 +243,13 @@ Usefully, and you'll see this in a later analysis, you can feed `extract()` a fu
 ```{r extract, eval=FALSE}
 
 # Extract the elevation values at the sites
-________$elev  <- _______::______(elevation, sites_cp)
+mounds$elev  <- raster::extract(elevation, mounds)
 
 # Look at the sites and extraction results
-____(mounds[_______])
-hist(____)
+plot(mounds["elev"])
+hist(mounds$elev)
+
+# Makes sense that nothing is ridicolously high or below sea level (for now)
 ```
 
 Great! `raster::extract()` is a very useful tool. It can be used with polygons as well as points, and the result can be written out as a separate vector or added to an existing object as a column. 
