@@ -90,16 +90,17 @@ In the `elevation` raster you've worked with the values are meters above sea lev
 
 ```{r reclass, eval=FALSE}
 # Plot the elevation layer to see the legend values
-___(elevation)
+plot(elevation)
+dim(elevation)
 
 # Set up the matrix
-vals <- ___
+vals <- cbind(-10000, 0, NA) 
 
 # Reclassify 
-elevation_reclass <- ___(elevation, ___ = ___)
+elevation_reclass <- reclassify(elevation, rcl = vals)
 
 # Plot again and confirm that the legend range is 0 - 2400
-___(elevation_reclass)
+plot(elevation_reclass)
 
 ```
 
