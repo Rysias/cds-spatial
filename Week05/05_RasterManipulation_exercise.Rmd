@@ -49,7 +49,7 @@ Raster data can be very big depending on the extent and resolution (grid size). 
 
 ```{r access-raster, echo=TRUE, eval=FALSE}
 # Library
-pacman::p_load(raster, rgdal)
+pacman::p_load(raster, rgdal, tidyverse)
 
 GDALinfo("../data/Aster.tif")
 # Read in the elevation layer
@@ -323,7 +323,26 @@ Find the mounds that enjoy the most prominent locations as well as those that fe
 * Plot both these sets of mounds in `mapview()` and compare their locations. 
 
 ```{r prom-mnd-ex}
-# YOUR CODE
+# Plot prominence/elevation and mounds
+plot(elevation_prom_overlay); plot(mounds, add=T)
+
+# Plot prominence and mounds
+plot(prominence); plot(mounds, add=T)
+
+# Extracting
+mounds$prom_el_overlay <- extract(elevation_prom_overlay, mounds)
+mounds$prominence <- extract(prominence, mounds)
+
+strategic_mounds <- mounds %>% 
+  dplyr::filter(prom_el_overlay == 1)
+
+prominent_mounds <- mounds %>% 
+  slice_max(prominence, n=25)
+
+print(prominent_mounds$TRAP_Code)
+
+mapview::mapview(strategic_mounds) + 
+  mapview::mapview(prominent_mounds, zcol="prominence")
 ```
 
 ### Question:
