@@ -47,7 +47,7 @@ Raster data can be very big depending on the extent and resolution (grid size). 
 * Use the `getValues()` function on the elevation object to read in all the data.
 * Use the `hist()` function to create a quick histogram of the elevation values. Note the pile of values near -9999, these should be `NA`  (any idea why?) and we will address this later.
 
-```{r access-raster, echo=TRUE, eval=FALSE}
+```{r access-raster, echo=TRUE, eval = TRUE}
 # Library
 pacman::p_load(raster, rgdal, tidyverse)
 
@@ -88,7 +88,7 @@ In the `elevation` raster you've worked with the values are meters above sea lev
 * Use the matrix and `reclassify()` to reclassify values below 0 to `NA`. You will need to use the argument `rcl`.
 * Plot the reclassified elevation layer to confirm there are no values below 0.
 
-```{r reclass, eval=FALSE}
+```{r reclass, eval = TRUE}
 # Plot the elevation layer to see the legend values
 plot(elevation)
 dim(elevation)
@@ -122,7 +122,7 @@ Note: In the past the `raster` package did not support `sf` objects. This should
 * Plot the `mounds_bb` and the `mounds` to see how these two objects relate.
 * Crop the `elevation` layer by the `mounds` object and create a smaller `elev` object
 * Plot the `elev` and `mounds` and the `mounds_bb` together.
-```{r  mounds-crop, eval = FALSE}
+```{r  mounds-crop, eval = TRUE}
 # YOUR CODE
 pacman::p_load(sf)
 
@@ -145,7 +145,7 @@ plot(elev); plot(mounds$geometry, add=T); plot(mounds_bb, add=TRUE)
 * Compute the area of the survey with `st_area()` and save this object as `areas`. What units are these?
 * Filter the survey units to only those above 30000 square meters with the `filter()` function. You will need to wrap `areas` in `unclass()`. Save as `survey_big`. Remember to have the tidyverse or dplyr library attached for `filter()` to work properly. Also sf might interfere so specify the dplyr::filter() if needed.
 
-```{r filter-area, eval=FALSE, echo=TRUE}
+```{r filter-area, eval = TRUE, echo=TRUE}
 # Read in the survey object
 survey <- read_sf("../data/KAZ_units.shp") %>% 
   st_transform(crs(elevation_reclass))
@@ -163,7 +163,7 @@ survey_big <- dplyr::filter(survey, as.vector(areas) > 30000)
 * Plot the geometry of the `survey_big` over it.
 * Mask the `elev` layer with `survey_big` and save as `elevation_mask`. This may take a couple of seconds.
 * Review the plot of `elevation_mask`. 
-```{r plot-elevation, eval=FALSE}
+```{r plot-elevation, eval = TRUE}
 # Plot the elevation raster
 plot(elev)
 
@@ -201,7 +201,7 @@ The function to reduce resolution in rasters is `aggregate()` which, as you migh
 * Plot the new raster with `plot()` for comparison to the old version.
 * Determine the new raster resolution and the number of raster cells.
 
-```{r aggr, eval=FALSE}
+```{r aggr, eval = TRUE}
 # Load the IKONOS raster
 east <- brick("../data/KazE.tif") 
 
@@ -209,7 +209,7 @@ east <- brick("../data/KazE.tif")
 plotRGB(east, stretch="lin", r=4)
 
 # Determine the raster resolution
-res(east)
+raster::res(east)
 
 # Determine the number of cells
 ncell(east)
@@ -221,7 +221,7 @@ east_small <- aggregate(east, fact = 10)
 plotRGB(east_small, stretch="lin", r=4)
 
 # Determine the new raster resolution
-res(east_small)
+raster::res(east_small)
 
 # Determine the number of cells in the new raster
 ncell(east_small)
@@ -240,7 +240,7 @@ Usefully, and you'll see this in a later analysis, you can feed `extract()` a fu
 * Use the `raster` function `extract()` to determine the elevation at each of the mounds. Assign the extracted value into a `elev` column in the mounds object. Beware that the extract() function exists across multiple packages, so it's wise to use raster:: in front of it.
 * Look at the `mounds` elevation column through the plot() function as well as histogram. Do the `extract()` results make sense? The `elevation` layer values represent meters above sea level.
 
-```{r extract, eval=FALSE}
+```{r extract, eval = TRUE}
 
 # Extract the elevation values at the sites
 mounds$elev  <- raster::extract(elevation, mounds)
@@ -270,7 +270,7 @@ What you will do in this exercise is essentially identify the most prominent loc
 * If you have not cropped the two rasters to the same extent yet, you can do so inside the `overlay()` function
 
 
-```{r overlay, eval=FALSE, echo=TRUE}
+```{r overlay, eval=T, echo=TRUE}
 # Check in on the elevation and read in prominence layer
 prominence <- raster("../data/prominence1500m.tif") %>% 
   raster::projectRaster(crs=crs(elevation))
@@ -300,8 +300,8 @@ Congratulations! You've now learned to perform raster math using the raster func
 *3. What is the actual value range in the `prom_el_overlay` raster? * 
 it seems to be [0, 1]
 *4. What area is covered by each cell?*
-```{r}
-res(elevation_prom_overlay)
+```{r, eval=F}
+raster::res(elevation_prom_overlay)
 ```
 The resolution is 30m^2
 # Task 7 - HOMEWORK: Inspect the most prominent mounds
@@ -330,8 +330,8 @@ plot(elevation_prom_overlay); plot(mounds, add=T)
 plot(prominence); plot(mounds, add=T)
 
 # Extracting
-mounds$prom_el_overlay <- extract(elevation_prom_overlay, mounds)
-mounds$prominence <- extract(prominence, mounds)
+mounds$prom_el_overlay <- raster::extract(elevation_prom_overlay, mounds)
+mounds$prominence <- raster::extract(prominence, mounds)
 
 strategic_mounds <- mounds %>% 
   dplyr::filter(prom_el_overlay == 1)
@@ -348,7 +348,7 @@ mapview::mapview(strategic_mounds) +
 ### Question:
 
 *5. How do the mounds with high prom_el_overlay values differ from those with high prominence? *
-
+Most of the high prominence mounds seem to also be highly elevated, which makes a lot of sense
 # Task 8 - OPTIONAL HOMEWORK: Sum raster values across polygons - assessing prominence of past settlements
 
 Previously you have extracted values from computed rasters at points. More often, you will need to extract values using more complex vector shapes where you will need to decide how to summarize the raster values that fall in. In this exercise, you will load the layer of ancient settlements for the Kazanlak Valley and sum the overlapping elevation_prom_overlay values within the settlement polygons. Then you will find out which of the sites contained at least 0.5 ha of strategic high-visibility area.
@@ -362,7 +362,7 @@ Previously you have extracted values from computed rasters at points. More often
 * Plot the result ( I recommend `mapview()`)
 * Produce a list of sites that have at least 0.5 ha (ie. 6 grid cells) within these strategic high-visibility locations. (Hint:you can first extract a list of overlapping sites and then use `sapply()` to filter out the ones > 6)
 
-```{r mask-crop-sites,eval = FALSE}
+```{r mask-crop-sites,eval=F}
 # Read in the site polygons
 sites <- ______("data/KAZ_nuclei.shp")
 
