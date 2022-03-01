@@ -49,22 +49,23 @@ Raster data can be very big depending on the extent and resolution (grid size). 
 
 ```{r access-raster, echo=TRUE, eval=FALSE}
 # Library
-___(raster)
+pacman::p_load(raster, rgdal)
 
+GDALinfo("../data/Aster.tif")
 # Read in the elevation layer
-elevation <- ___("data/Aster.tif")
+elevation <- raster("../data/Aster.tif")
 
 # Check if the data is in memory
-___(___)
+inMemory(elevation)
 
 # Use head() to peak at the first few records
-___(___)
+head(elevation)
 
 # Use getValues() to read the values into a vector
-vals <- ___(elevation)
+vals <- getValues(elevation)
 
 # Use hist() to create a histogram of the values
-___(vals)
+hist(vals)
 
 ```
 
