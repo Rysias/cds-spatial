@@ -1,6 +1,6 @@
 ---
 title: "05 - Raster manipulation"
-author: "Adela Sobotkova"
+author: "Jonathan Rystrøm"
 date: "06/02/2022 updated `r Sys.Date()`"
 output:
   rmdformats::readthedown:
