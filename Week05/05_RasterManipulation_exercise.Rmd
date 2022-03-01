@@ -272,25 +272,25 @@ What you will do in this exercise is essentially identify the most prominent loc
 
 ```{r overlay, eval=FALSE, echo=TRUE}
 # Check in on the elevation and read in prominence layer
-elevation
-prominence <- ___(___)
+prominence <- raster("../data/prominence1500m.tif") %>% 
+  raster::projectRaster(crs=crs(elevation))
 
 # Plot prominence
 plot(prominence)
 
 # Function f with 2 arguments and the raster math code
-f <- function(rast1, rast2) {
-    _________
+f <- function(r1, r2) {
+    (400 < r1) & (r1 < 650) & (r2 > 60)
 }
 
 # Align the extent of the two rasters with crop()
+c_prominence <- crop(prominence, elev)
 
 # Do the overlay using f as fun. 
-elevation_prom_overlay <- ___(elevation, ___, fun = ___)
-
+elevation_prom_overlay <- overlay(elev, c_prominence, fun = f)
 
 # Plot the result (low elevation and high prominence areas)
-___(elevation_prom_overlay)
+plot(elevation_prom_overlay)
 ```
 
 Congratulations! You've now learned to perform raster math using the raster function `overlay()`. You limited to areas with > 400m & <650m elevation and > 60% prominence, these areas should harbor the most prominent mounds (or defense-ready areas if associated with settlements) in Kazanlak.
@@ -298,9 +298,12 @@ Congratulations! You've now learned to perform raster math using the raster func
 ### Questions:
 
 *3. What is the actual value range in the `prom_el_overlay` raster? * 
-
+it seems to be [0, 1]
 *4. What area is covered by each cell?*
-
+```{r}
+res(elevation_prom_overlay)
+```
+The resolution is 30m^2
 # Task 7 - HOMEWORK: Inspect the most prominent mounds
 
 In the above exercise, we produced an elevation-prominence overlay. Mounds and other sites that sit in this overlay enjoy a strategic position vis-a-vis the rest of the valley. Which ones are they, however, and what are their real prominence values?  It is hard to see at the scale of the valley and it would be good to pull the sites out. 
