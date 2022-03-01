@@ -124,6 +124,18 @@ Note: In the past the `raster` package did not support `sf` objects. This should
 * Plot the `elev` and `mounds` and the `mounds_bb` together.
 ```{r  mounds-crop, eval = FALSE}
 # YOUR CODE
+pacman::p_load(sf)
+
+mounds <- read_sf("../data/KAZ_mounds.shp")
+st_crs(mounds) == crs(elevation)
+
+mounds <- st_transform(mounds, crs(elevation))
+
+mounds_bb <- st_make_grid(mounds)
+
+elev <- raster::crop(elevation_reclass, mounds)
+
+plot(elev); plot(mounds$geometry, add=T); plot(mounds_bb, add=TRUE)
 ```
 
 ## Instructions II
@@ -135,13 +147,14 @@ Note: In the past the `raster` package did not support `sf` objects. This should
 
 ```{r filter-area, eval=FALSE, echo=TRUE}
 # Read in the survey object
-survey <- ___(___)
+survey <- read_sf("../data/KAZ_units.shp") %>% 
+  st_transform(crs(elevation_reclass))
 
 # Compute the area of the survey
-areas <- ___(survey)
+areas <- st_area(survey)
 
 # Filter to survey with areas > 30000
-survey_big <- ___(survey, ___ > 30000)
+survey_big <- dplyr::filter(survey, as.vector(areas) > 30000)
 ```
 
 ## Instructions III
@@ -152,13 +165,13 @@ survey_big <- ___(survey, ___ > 30000)
 * Review the plot of `elevation_mask`. 
 ```{r plot-elevation, eval=FALSE}
 # Plot the elevation raster
-plot(________)
+plot(elev)
 
 # Plot the geometry of survey_big
-plot(_________(survey_big))
+plot(elev); plot(st_geometry(survey_big), add=T)
 
 # Mask the elev layer with survey_big and save as elevation_mask
-elevation_mask <- ________(elev, mask = survey_big)
+elevation_mask <- mask(elev, mask = survey_big)
 
 # Plot elevation_mask -- this is a raster!
 plot(elevation_mask)
@@ -169,8 +182,10 @@ Nice! You ensured that layers had the same CRS, you cropped raster, computed bou
 ### Question: 
  
 *1. What extent does the elevation raster default to after cropping by mounds vs by masking by the large polygons of survey_big?*
+They have approximately the same extend - however, it simply overlays in the first case, whereas the second case only shows the elevation of the mounds. 
 
 *2. Why do we not use the mounds bounding box to crop the elevation raster?*
+It seems like they have the wrong datatype - it at least throws an error when you try. 
 
 # Task 4: Reduce the raster grid cell size using aggregate
 Rasters, such as ortophotos, terrain models, or aggregated rasters for large area, often come is resolutions far greater than you need. Up till now you have played with fairly small, processed rasters. Now you are getting a taste of the real thing.  To reduce the computational load when running analyses, or when developing the right approach, you might wish to use a reduced resolution raster.
