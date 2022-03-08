@@ -10,6 +10,7 @@ output:
 ```{r setup, include=FALSE}
 library(knitr)
 library(rmdformats)
+rm(list=ls())
 
 ## Global options
 options(max.print="75")
@@ -58,12 +59,62 @@ Beware that the survey dataset has the following limitations:
 
 
 # Specify your approach and elaborate your solution here:
+The first step is downloading the data (done manually) and then aggegating to get a more manageable file-size. This is NOT evaluated for everyone's sake
 ```{r eval=FALSE}
-library(raster)
-library(sf)
-train <- st_read("../data/kaz_training_aggr.shp")
-## YOUR CODE
+# Downsizing
+big_raster <- raster::brick("../data/KazEastfused.tif")
+smaller_raster <- raster::aggregate(big_raster, fact=10)
+
+writeRaster(smaller_raster, "../data/KazEastSmallish.tif")
 ```
+
+
+```{r eval=TRUE}
+calc_ndvi <- function(R, NIR) {
+  (NIR - R) / (NIR + R)
+}
+
+pacman::p_load(raster, sf, tidyverse, ranger)
+train <- st_read("../data/kaz_training_aggr.shp")
+kaz_raster <- brick("../data/KazEastSmallish.tif")
+
+# Calculate NDVI
+kaz_ndvi <- overlay(kaz_raster[[3]], kaz_raster[[4]], fun=calc_ndvi)
+
+# All covariates
+covs <- stack(kaz_raster, kaz_ndvi)
+
+# Create target to be cropland or not cropland
+train <- train %>% 
+  mutate(is_cropland = as_factor(if_else(Descr_en == "croplandhighveg", "Cropland", "Other"))) %>% 
+  select(is_cropland, geometry)
+
+trainingData <- raster::extract(covs, train)
+
+
+# Function to transform from raster to df
+raster_to_df <- function(ras, class_name) {
+  ras %>% 
+    as_tibble %>% 
+    mutate(class = class_name)
+}
+
+full_df <- map2_dfr(trainingData, train$is_cropland, raster_to_df) %>% 
+  as.data.frame
+
+# Lil plot :))
+full_df %>% 
+  ggplot(aes(x=layer, fill=class, y=..density..)) + 
+  geom_density()
+
+
+# This is where the fun begins!
+modelRF <- ranger(x=select(full_df, -class), y=full_df$class, importance = "permutation", seed=0xfedbeef)
+
+print(modelRF$confusion.matrix)
+print(importance(modelRF))
+```
+
 
 
 

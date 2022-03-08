@@ -92,7 +92,6 @@ dem <- raster(dem)
 # you may need to enable the rglwidget() if you don't see the plot3D() function working
 rglwidget()
 plot3D(dem, rev=T, zfac=1)
-
 ```
  
 
