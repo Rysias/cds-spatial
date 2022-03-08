@@ -86,7 +86,7 @@ covs <- stack(kaz_raster, kaz_ndvi)
 
 # Create target to be cropland or not cropland
 train <- train %>% 
-  mutate(is_cropland = as_factor(if_else(Descr_en == "croplandhighveg", "Cropland", "Other"))) %>% 
+  mutate(is_cropland = as_factor(if_else(Descr_en == "croplandhighveg", "Cropland", "Other"))) %>%
   select(is_cropland, geometry)
 
 trainingData <- raster::extract(covs, train)
@@ -111,8 +111,24 @@ full_df %>%
 # This is where the fun begins!
 modelRF <- ranger(x=select(full_df, -class), y=full_df$class, importance = "permutation", seed=0xfedbeef)
 
+# Evaluating
 print(modelRF$confusion.matrix)
 print(importance(modelRF))
+```
+
+### KNN
+Now it's time for some Kmeans magic
+```{r}
+# train the model
+kmean_model <- kmeans(as.data.frame(stack(kaz_raster, kaz_ndvi)), 8)
+
+# extracting the clusters
+clusters <- raster(kaz_raster)
+clusters <- raster::setValues(clusters, kmean_model$cluster)
+
+# Plot and stats
+plot(clusters)
+mean_zones <- zonal(stack(kaz_raster, kaz_ndvi), clusters, fun="mean") 
 ```
 
 
