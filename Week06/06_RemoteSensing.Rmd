@@ -38,20 +38,19 @@ Start by installing the required packages first.
 `rasterVis` and `RColoBrewer` are used for visualisation of rasters, `lattice` and `latticeExtra` for extra graphical utilities, while `landsat` provides the imagery samples and `rgl` allows for 3D visualisation. 
 
 ```{r packages}
-#install.packages(c("rasterVis", 
-                   # "RColorBrewer", 
-                   # "landsat",
-                   # "lattice",
-                   # "latticeExtra",
-                   # "rgl",
-                   # "itcSegment"))
 
-library(lattice)
-library(latticeExtra)
-library(RColorBrewer)
-library(rasterVis)
-library(rgdal)
-library(rgl)
+pacman::p_load(
+  lattice,
+  latticeExtra,
+  RColorBrewer,
+  landsat,
+  itcSegment,
+  rasterVis,
+  rgdal,
+  raster,
+  rgl
+)
+
 ```
 
 # Task 2: Pre-processing of Landsat datasets 
@@ -63,8 +62,6 @@ The images are in the `SpatialGridDataFrame` format and need to be converted to 
 
 
 ```{r plot-img-data}
-library(landsat)
-
 ##load indvidual band image data from landsat package
 ?nov
 
@@ -330,8 +327,7 @@ summary(se)
 plot(se,axes=T)
 
 ### Let´s overlay the image and the product of segmentation (run both lines)
-plot(imgData)
-plot(se,axes=T,add=T)
+plot(imgData); plot(se,axes=T,add=T)
 ```
 
 
