@@ -32,10 +32,7 @@ See if you can plot the provided data and differentiate by color the baths whose
 # Before we start: libraries
 First load the packages necessary for spatial data visualisation and analysis. You need to run this chunk before all others. 
 ```{r libraries}
-library(sf)
-library(tidyverse)
-library(googlesheets4)
-library(leaflet)
+pacman::p_load(sf,tidyverse,googlesheets4,leaflet)
 ```
 
 # Collect some background maps from the internet

@@ -34,12 +34,13 @@ As you are plotting you should be trying to answer the question of
 # Before we start: data wrangling
 First load the packages necessary for spatial data visualisation and analysis.
 ```{r libraries}
-library(sf)
-library(tidyverse)
-library(spatstat)
-library(spatialkernel)
-library(googlesheets4)
-library(leaflet)
+pacman::p_load(sf,
+               tidyverse,
+               spatstat,
+               spatialkernel,
+               googlesheets4,
+               leaflet,
+               osmdata)
 ```
 
 ## Spatial data
@@ -95,6 +96,11 @@ wcdata
 ### Questions: 
 
 1. *What percentage of flats have access to a bath in 1950 in Copenhagen as a whole?*
+```{r}
+wc %>% 
+  filter(year == 1950) %>% 
+  summarise(pct_bath_acces = sum(bath) / sum(flats))
+```
 
 2. *In what year is the percentage of flats with access to a WC in Copenhagen the lowest, and how much it is?*
 
@@ -143,6 +149,7 @@ wc1950 <- wc_spatial %>%
 
 library(tmap)
 tmap_mode(mode = "plot")
+tmap_options( check.and.fix=TRUE)
 tm_shape(wc1950) +
   tm_borders(col = "black",
              lwd = 1) +
@@ -224,6 +231,7 @@ tm_shape(wc_spatial) +
 library(tmap)
 tmap_options(limits = c(facets.view = 5)) # we want to view 5 periods
 tmap_mode(mode = "view" )
+tmap_options(check.and.fix = T)
 tm_shape(wc_spatial) +
   tm_facets(by = "year",
             ncol=3, nrow = 2)+
