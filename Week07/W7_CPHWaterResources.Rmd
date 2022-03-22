@@ -34,6 +34,7 @@ As you are plotting you should be trying to answer the question of
 # Before we start: data wrangling
 First load the packages necessary for spatial data visualisation and analysis.
 ```{r libraries}
+<<<<<<< HEAD
 pacman::p_load(sf,
                tidyverse,
                spatstat,
@@ -41,10 +42,17 @@ pacman::p_load(sf,
                googlesheets4,
                leaflet,
                osmdata)
+=======
+library(sf)
+library(tidyverse)
+library(googlesheets4)
+library(leaflet)
+>>>>>>> CDS-AU-DK-main
 ```
 
 ## Spatial data
 Next, load your spatial data - polygons representing the suburbs of Copenhagen. 
+On some computers, you may need to use the `options = "ENCODING=WINDOWS-1252"` argument to work around the special characters in this shapefile. Also, if the shapefile is producing invalid shape errors, `st_make_valid()` function will fix residual encoding issues in the geometry column. 
 ```{r}
 suburbs <- st_read("../data/bydel.shp", options = "ENCODING=WINDOWS-1252") # this option was added by Malte in 2022 to fix the Danish special characters on my computer
 
@@ -55,6 +63,7 @@ tail(suburbs)
 suburbs$id
 
 ```
+
 ## Attribute data
 Next let's bring in the attribute data. 
 You can read the data in from a googlesheet with `read_sheet()` function from the `googlesheets4` package, or you can use the `read_csv()` function to read the `wc.csv` provided in the data folder.
@@ -218,11 +227,11 @@ tmap_options(limits = c(facets.view = 5)) # we want to view 5 years
 tmap_mode(mode = "view" )
 tm_shape(wc_spatial) +
   tm_facets(by = "year",
-            ncol=3, nrow = 2)+
+            ncol=5, nrow = 1)+
   tm_polygons("pct_bath",
               id = "navn",
              style = "pretty", 
-             title = "% of flats with <br> access to bath") #+
+             title = "% of flats with <br> access to a bath") #+
   
 ```
 <br>
