@@ -25,15 +25,21 @@ First, you'll generate 200 points distributed uniformly in a rectangle. The rect
 
 ```{r point generation, eval = FALSE}
 n = 200
+<<<<<<< HEAD
 
 xmin <- 0
 xmax <- 1
 ymin <- 0
 ymax <- 2 
 
+=======
+xmin <- 
+xmax <- 
+ymin <- 
+ymax <- 
+>>>>>>> CDS-AU-DK-main
 x = runif(n, xmin, xmax)
 y = runif(n, ymin, ymax)
-
 ```
 
 
@@ -55,16 +61,18 @@ The boundaries of the rectangle have been pre-defined as `xmin`, `xmax`, `ymin`,
 
 ```{r rectangle, eval=FALSE}
 plot(x,y)
-
 ls.str()
-
 mapxy <- function(a = NA){
   plot(x, y, asp = a)
   rect(xmin, ymin, xmax, ymax)
 }
+<<<<<<< HEAD
 
 mapxy(1)
 
+=======
+mapxy(__)
+>>>>>>> CDS-AU-DK-main
 ```
 
 Aha! Forcing the aspect ratio to 1 should prevent the distortion of areas.
@@ -90,22 +98,30 @@ The number of points to generate and the circle's radius are shown in the script
 
 ```{r circle, eval = FALSE}
 # Load the spatstat package
+<<<<<<< HEAD
 pacman::p_load(spatstat)
 
+=======
+___
+>>>>>>> CDS-AU-DK-main
 # Create this many points, in a circle of this radius
 n_points <- 300
 radius <- 10
-
 # Generate uniform random numbers up to radius-squared using the objects above
 r_squared <- runif(n_points, 0, radius^2)
 angle <- runif(n_points, 0, 2*pi)
-
 # Take the square root of the values to get a uniform spatial distribution
+<<<<<<< HEAD
 x <- sqrt(r_squared) * cos(angle)
 y <- sqrt(r_squared) * sin(angle)
 
 plot(disc(radius=radius)); points(x, y)
 
+=======
+x <- ___ * ___
+y <- ___ * ___
+plot(___); points(x, y)
+>>>>>>> CDS-AU-DK-main
 ```
 
 
@@ -131,12 +147,20 @@ ls.str()
 x <-  runif(300, -10,10)
 y <-  runif(300, -10,10)
 radius <- 10
+<<<<<<< HEAD
 # Set coordinates and window
 ppxy <- ppp(x = x, y = y, window = disc(radius=10))
 
 # Test the point pattern
 qt <- quadrat.test(ppxy)
 
+=======
+summary(x)
+# Set coordinates and window
+ppxy <- ppp(x = ___, y = ___, window = ___)
+# Test the point pattern
+qt <- ___(___)
+>>>>>>> CDS-AU-DK-main
 # Inspect the results
 plot(qt)
 print(qt)
@@ -164,6 +188,7 @@ The `area.owin()` function of `spatstat` will compute the area of a window such 
 
 ```{r ppoisson, eval=FALSE}
 # Create a disc of radius 10
+<<<<<<< HEAD
 disc10 <- disc(radius=10)
 
 # Compute the rate as count divided by area
@@ -172,6 +197,13 @@ lambda <- 500 / area.owin(disc10)
 # Create a point pattern object
 ppois <- rpoispp(lambda = lambda, win = disc10)
 
+=======
+disc10 <- ___
+# Compute the rate as count divided by area
+lambda <- ___ / ___
+# Create a point pattern object
+ppois <- rpoispp(lambda = ___, win = ___)
+>>>>>>> CDS-AU-DK-main
 # Plot the Poisson point pattern
 plot(ppois)
 ```
@@ -203,21 +235,27 @@ Conversely the points of a *Strauss* process cause a lowering in the probability
 
 ```{r clustering,eval= FALSE}
 # Create a disc of radius 10
+<<<<<<< HEAD
 disc10 <- disc(radius=10)
 
+=======
+disc10 <- ___
+>>>>>>> CDS-AU-DK-main
 # Generate clustered points from a Thomas process
 set.seed(123)
 p_cluster <- rThomas(kappa = 0.35, scale = 1, mu = 3, win = disc10)
 plot(p_cluster)
-
 # Run a quadrat test
+<<<<<<< HEAD
 quadrat.test(p_cluster, alternative = "clustered")
 
+=======
+___(p_cluster, alternative = "___")
+>>>>>>> CDS-AU-DK-main
 # Regular points from a Strauss process
 set.seed(123)
 p_regular <- rStrauss(beta = 2.9, gamma = 0.025, R = .5, W = disc10)
 plot(p_regular)
-
 # Run a quadrat test
 quadrat.test(p_regular, alternative = "regular")
 ```
@@ -250,3 +288,15 @@ quadrat.test(p1, alternative="clustered")
 2. p1 is regular, p2 is clustered 
 3. p1 is clustered, p2 is clustered (THIS SEEM TO BE THE RIGHT ONE!)
 4. p1 is clustered, p2 is regular
+© 2022 GitHub, Inc.
+Terms
+Privacy
+Security
+Status
+Docs
+Contact GitHub
+Pricing
+API
+Training
+Blog
+About
